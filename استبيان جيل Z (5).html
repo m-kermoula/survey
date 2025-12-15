@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استبيان سلوك المستهلك الرقمي - جيل Z</title>
+    <!-- مكتبة Excel الرسمية والسريعة (Official Fast CDN) -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.mini.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #2180a8;
+            --color-primary-hover: #1d746f;
+            --color-bg: #f5f5f5;
+            --color-surface: #ffffff;
+            --color-text: #133252;
+            --color-text-secondary: #626c71;
+            --color-border: #e0e0e0;
+            --color-success: #32b8c6;
+            --radius-base: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            padding: 20px;
+            color: var(--color-text);
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+            margin-bottom: 0;
+        }
+
+        .alert-banner {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 25px;
+            color: #856404;
+            font-weight: 600;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(255,193,7,0.2);
+        }
+
+        .alert-banner::before {
+            content: '🔐';
+            font-size: 1.4em;
+            flex-shrink: 0;
+        }
+
+        .content {
+            padding: 35px;
+        }
+
+        .section-title {
+            background: #f0f8ff;
+            border-right: 5px solid var(--color-primary);
+            padding: 15px 15px 15px 20px;
+            margin: 35px 0 25px 0;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--color-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .section-content {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .question-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f9f9f9;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .option-label:hover {
+            background: #f0f8ff;
+            border-color: var(--color-primary);
+        }
+
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
+            margin-left: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--color-primary);
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text,
+        .option-label input[type="checkbox"]:checked ~ .option-text {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .option-label input[type="radio"]:checked,
+        .option-label input[type="checkbox"]:checked {
+            accent-color: var(--color-success);
+        }
+
+        .option-label.checked {
+            background: #e6f7f9;
+            border-color: var(--color-success);
+        }
+
+        .option-text {
+            flex: 1;
+            text-align: right;
+        }
+
+        .scale-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .scale-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 8px;
+            background: #f9f9f9;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            min-height: 110px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scale-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.5);
+            transition: left 0.3s ease;
+            pointer-events: none;
+        }
+
+        .scale-option:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .scale-option input[type="radio"] {
+            margin: 8px 0 0 0;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .scale-option input[type="radio"]:checked {
+            accent-color: white;
+        }
+
+        .scale-option.checked-strongly-disagree {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            border-color: #ff6b6b;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+        }
+
+        .scale-option.checked-disagree {
+            background: linear-gradient(135deg, #ffa94d 0%, #ff922b 100%);
+            border-color: #ffa94d;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(255,160,77,0.3);
+        }
+
+        .scale-option.checked-neutral {
+            background: linear-gradient(135deg, #a8b8c8 0%, #8b9ba8 100%);
+            border-color: #a8b8c8;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(168,184,200,0.3);
+        }
+
+        .scale-option.checked-agree {
+            background: linear-gradient(135deg, #74c0fc 0%, #4dabf7 100%);
+            border-color: #74c0fc;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(116,192,252,0.3);
+        }
+
+        .scale-option.checked-strongly-agree {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            border-color: #51cf66;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(81,207,102,0.3);
+        }
+
+        .scale-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-top: 6px;
+            line-height: 1.3;
+        }
+
+        .scale-labels {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .scale-labels > div {
+            padding: 8px 4px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-right: 4px solid var(--color-primary);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            color: var(--color-text-secondary);
+            font-size: 0.95em;
+        }
+
+        .demographic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .demographic-input {
+            padding: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+        select.demographic-input {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--color-border);
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            min-width: 200px;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(33, 128, 168, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--color-text);
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-success);
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-section {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .admin-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .admin-btn:hover {
+            background: var(--color-primary-hover);
+        }
+        
+        button:disabled {
+            background: #6c757d !important;
+            cursor: wait;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+
+            .demographic-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scale-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .buttons-container {
+                flex-direction: column-reverse;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .admin-section {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-section">
+        <button class="admin-btn" id="adminToggle">🔐 لوحة المسؤول</button>
+        <div id="shareSection" style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 6px; border: 1px solid #4caf50;">
+            <button class="admin-btn" id="shareBtn" style="width: 100%; background: #4caf50; margin-bottom: 8px;">📤 مشاركة الرابط</button>
+            <div id="shareContent" style="display: none; padding: 10px; background: white; border-radius: 4px;">
+                <input type="text" id="surveyLink" readonly style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85em; margin-bottom: 8px; font-family: monospace;">
+                <button id="copyBtn" style="width: 100%; padding: 6px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85em;">📋 نسخ الرابط</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <h2 style="color: #133252; margin-top: 0; margin-bottom: 20px;">🔐 لوحة إدارة الاستبيانات</h2>
+            
+            <div id="loginForm">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">البريد الإلكتروني:</label>
+                    <input type="email" id="adminEmail" placeholder="أدخل بريدك الإلكتروني" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 1em; font-family: inherit;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">كلمة المرور:</label>
+                    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 1em; font-family: inherit;">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="loginBtn" class="admin-btn" style="flex: 1;">دخول</button>
+                    <button id="closeModal" style="flex: 1; background: #ddd; color: #333; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 600;">إغلاق</button>
+                </div>
+            </div>
+
+            <div id="adminPanel" style="display: none;">
+                <p style="color: #626c71; margin-bottom: 20px;">✓ أنت مسجل دخول كمسؤول</p>
+                <div style="background: #f0f8ff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <p style="margin: 0 0 10px 0;">📊 <strong>إجمالي الردود:</strong> <span id="totalResponses">0</span></p>
+                    <p style="margin: 0 0 10px 0;">📅 <strong>آخر تحديث:</strong> <span id="lastUpdate">-</span></p>
+                    <p style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                        <strong>📨 استقبال الردود:</strong> 
+                        <span id="responseStatusBadge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #4caf50; color: white;">🟢 مفعل</span>
+                    </p>
+                </div>
+
+                <!-- عنصر التحكم بتفعيل/إيقاف استقبال الردود -->
+                <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffc107; display: flex; align-items: center; gap: 12px;">
+                    <div style="flex: 1;">
+                        <p style="margin: 0 0 8px 0; font-weight: 600; color: #856404;">⚙️ التحكم في استقبال الردود</p>
+                        <p style="margin: 0; font-size: 0.85em; color: #856404;">قم بتفعيل أو إيقاف استقبال الردود الجديدة من المستجيبين</p>
+                    </div>
+                    <button id="toggleResponsesBtn" class="admin-btn" style="background: #4caf50; white-space: nowrap; min-width: 140px; font-size: 0.95em;">🟢 إيقاف الاستقبال</button>
+                </div>
+
+                <!-- إحصائيات التحليل -->
+                <div style="background: #e8f5e9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #4caf50;">
+                    <h3 style="margin: 0 0 12px 0; color: #2e7d32; font-size: 0.95em;">📈 التحليلات الإحصائية</h3>
+                    <div style="background: white; padding: 12px; border-radius: 4px; margin-bottom: 10px;">
+                        <p style="margin: 0 0 8px 0; font-size: 0.9em;"><strong>الثبات الداخلي (Alpha Cronbach):</strong></p>
+                        <div id="cronbachAlpha" style="font-size: 1.1em; color: #1976d2; font-weight: bold;">-</div>
+                    </div>
+                    <div style="background: white; padding: 12px; border-radius: 4px; margin-bottom: 10px;">
+                        <p style="margin: 0 0 8px 0; font-size: 0.9em;"><strong>المتوسطات الحسابية:</strong></p>
+                        <div id="meanValues" style="font-size: 0.85em; color: #424242; line-height: 1.8;">-</div>
+                    </div>
+                    <div style="background: white; padding: 12px; border-radius: 4px;">
+                        <p style="margin: 0 0 8px 0; font-size: 0.9em;"><strong>توزيع الردود:</strong></p>
+                        <canvas id="responseChart" style="max-width: 100%; height: auto;"></canvas>
+                    </div>
+                </div>
+
+                <button id="downloadAllBtn" class="admin-btn" style="width: 100%; margin-bottom: 10px;" disabled>⏳ جاري تجهيز النظام...</button>
+                <button id="deleteAllBtn" class="admin-btn" style="width: 100%; margin-bottom: 10px; background: #ff6b6b;" disabled>🗑️ حذف جميع الردود</button>
+                <button id="logoutBtn" class="admin-btn" style="width: 100%; background: #d32f2f;">🚪 تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/c09f8289-bd6e-474f-bc46-c43d9fd76e2f" alt="جيل Z" class="header-image">
+                <h1>📊 استبيان سلوك المستهلك الرقمي</h1>
+                <p>جيل Z والمحتوى الرقمي - بحث أكاديمي</p>
+                <div class="alert-banner">
+                    هذا الاستبيان مخصص للبحث العلمي فقط · جميع البيانات محمية وسرية · تقديم طوعي
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <div class="info-box">
+                💡 شكراً لمشاركتك في هذا الاستبيان البحثي. جميع البيانات سرية وتُستخدم لأغراض البحث العلمي فقط.
+            </div>
+
+            <form id="surveyForm">
+                <!-- الأسئلة الديموغرافية -->
+                <div class="section-title">📋 البيانات الديموغرافية</div>
+
+                <div class="form-group">
+                    <div class="question-title">ما هو جنسك؟</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="gender" value="ذكر" required>
+                            <span class="option-text">ذكر</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="gender" value="أنثى" required>
+                            <span class="option-text">أنثى</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">سنة ميلادك (أو الفئة العمرية):</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="birth_year" value="قبل 1995" required>
+                            <span class="option-text">قبل سنة 1995</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="birth_year" value="1995-2010" required>
+                            <span class="option-text">من 1995 إلى 2010</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="birth_year" value="بعد 2010" required>
+                            <span class="option-text">بعد سنة 2010</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">معدل استخدامك للإنترنت يومياً:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="internet_usage" value="أقل من ساعة" required>
+                            <span class="option-text">أقل من ساعة واحدة</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="internet_usage" value="1-3 ساعات" required>
+                            <span class="option-text">من 1 إلى 3 ساعات</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="internet_usage" value="أكثر من 3 ساعات" required>
+                            <span class="option-text">أكثر من 3 ساعات</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">المنصات الرقمية التي تستخدمها بانتظام: (يمكن اختيار أكثر من إجابة)</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="checkbox" name="platforms" value="سناب شات">
+                            <span class="option-text">🟡 سناب شات</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="platforms" value="إنستغرام">
+                            <span class="option-text">📷 إنستغرام</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="platforms" value="تيك توك">
+                            <span class="option-text">🎵 تيك توك</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="platforms" value="يوتيوب">
+                            <span class="option-text">📺 يوتيوب</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- أولاً: الجاذبية البصرية -->
+                <div class="section-title">
+                    <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/8938d39a-b332-4c4a-accf-7d53b56ec18a" alt="جاذبية بصرية" class="section-image">
+                    <div class="section-content">
+                        <span>🎨 أولاً: الجاذبية البصرية</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Visual Appeal - تصميم وألوان لافتة</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. يجذب انتباهي المحتوى الرقمي الذي يتميز بتصاميم وألوان لافتة</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. زيادة جودة الصور والفيديوهات تجعلني أكثر ميلاً لمتابعة العلامة التجارية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. أفضل المحتوى الذي يستخدم عناصر بصرية واضحة ومبتكرة</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. عندما يكون تصميم المحتوى جميلاً، أشعر بدافع أكبر للانخراط والتفاعل معه</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="visual_appeal_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ثانياً: التفاعلية -->
+                <div class="section-title">
+                    <div class="section-content">
+                        <span>💬 ثانياً: التفاعلية</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Interactivity - التعليق والمشاركة</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. أفضل المحتوى الذي يتيح لي التعليق والمشاركة في النقاشات الرقمية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. يزيد تفاعلي مع العلامة التجارية عندما تستجيب لاستفساراتي عبر المنصات الرقمية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. أميل أكثر إلى المحتوى الذي يتضمن استطلاعات، اختبارات أو مسابقات تفاعلية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. أشارك بشكل أكبر مع العلامات التجارية التي تحفزني صراحةً على التفاعل المباشر معها</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="interactivity_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ثالثاً: القيمة المعلوماتية -->
+                <div class="section-title">
+                    <div class="section-content">
+                        <span>📚 ثالثاً: القيمة المعلوماتية</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Informational Value - معلومات موثوقة</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. يزوّدني المحتوى الرقمي الذي أتابعه بمعلومات جديدة وأعتبرها موثوقة</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. أقدّر المحتوى الذي يساعدني على اتخاذ قرارات شرائية أكثر وعيًا</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. كلما كانت المعلومات دقيقة ومرتبطة باهتماماتي، زاد اهتمامي بالمحتوى الرقمي</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. أرى أن المحتوى التعليمي أو الإرشادي أكثر فائدة لي من المحتوى الترويجي البحت</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="info_value_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- رابعاً: التخصيص -->
+                <div class="section-title">
+                    <div class="section-content">
+                        <span>👤 رابعاً: التخصيص</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Personalization - محتوى موجه لك</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. يجذبني المحتوى الرقمي الذي يتوافق مع اهتماماتي الشخصية وسلوكياتي السابقة</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. أفضل أن تقدم لي العلامات التجارية محتوى موجهاً بناءً على تفضيلاتي الرقمية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. أشعر بأن تجربتي الرقمية أكثر إرضاءً عندما يكون المحتوى مصمماً خصيصاً لي</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. كلما كان المحتوى مخصصاً وموجهاً لي شخصياً، زادت احتمالية تفاعلي معه</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="personalization_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- خامساً: الانتشار والتداول -->
+                <div class="section-title">
+                    <div class="section-content">
+                        <span>🚀 خامساً: الانتشار والتداول</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Shareability & Virality - المحتوى الفيروسي</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. أشارك مع أصدقائي المحتوى الذي أراه ممتعاً أو مفيداً عبر المنصات الرقمية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. أعتبر سهولة مشاركة المحتوى عاملاً مهماً في استمراري في التفاعل معه</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. يدفعني انتشار المحتوى على نطاق واسع إلى اكتشاف العلامة التجارية المرتبطة به</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. أميل إلى متابعة الحسابات التي تنشر محتوى يُتداول بكثرة بين المستخدمين</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="shareability_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- سادساً: سلوك المستهلك الرقمي لجيل Z -->
+                <div class="section-title">
+                    <div class="section-content">
+                        <span>🛍️ سادساً: سلوك المستهلك الرقمي</span>
+                        <div style="font-size: 0.75em; color: #626c71; margin-top: 4px; font-weight: 400;">Consumer Behavior - السلوك الشرائي الرقمي</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">1. أفضل البحث عن المنتجات والخدمات عبر المنصات الرقمية قبل اتخاذ قرار الشراء</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_1" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_1" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_1" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_1" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_1" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">2. أتأثر بتوصيات المؤثرين والمحتوى الذي يقدمه المستخدمون أكثر من الإعلانات التقليدية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_2" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_2" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_2" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_2" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_2" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">3. أميل إلى التفاعل (إعجاب، تعليق، مشاركة) مع العلامات التجارية التي تقدم محتوى يتوافق مع اهتماماتي</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_3" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_3" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_3" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_3" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_3" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="question-title">4. أوصي الآخرين بالمنتجات أو العلامات التجارية عندما تكون تجربتي الرقمية معها إيجابية</div>
+                    <div class="scale-container">
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_4" value="أعارض بشدة" required>
+                            <span class="scale-label">أعارض<br>بشدة</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_4" value="أختلف">
+                            <span class="scale-label">أختلف</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_4" value="محايد">
+                            <span class="scale-label">محايد</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_4" value="أوافق">
+                            <span class="scale-label">أوافق</span>
+                        </label>
+                        <label class="scale-option">
+                            <input type="radio" name="consumer_behavior_4" value="أوافق بشدة">
+                            <span class="scale-label">أوافق<br>بشدة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="buttons-container">
+                    <button type="submit" class="btn-primary">✅ تقديم الاستبيان</button>
+                    <button type="reset" class="btn-secondary">🔄 إعادة تعيين</button>
+                </div>
+            </form>
+
+            <div id="successMessage" class="success-message">
+                ✅ شكراً لك! تم حفظ إجابتك بنجاح. بيانات الاستبيان آمنة وسرية.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // إدارة المصادقة والبيانات
+        const ADMIN_PASSWORD = 'Ker19981998';
+        const ADMIN_EMAILS = ['mour4127@gmail.com'];
+        let isAdminLoggedIn = false;
+        let isResponsesAccepting = JSON.parse(localStorage.getItem('isResponsesAccepting')) !== false;
+        let allResponses = JSON.parse(localStorage.getItem('surveyResponses')) || [];
+        let responseChart = null;
+
+        const form = document.getElementById('surveyForm');
+        const successMessage = document.getElementById('successMessage');
+        const progressFill = document.querySelector('.progress-fill');
+        const adminModal = document.getElementById('adminModal');
+        const adminToggle = document.getElementById('adminToggle');
+        const closeModal = document.getElementById('closeModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const adminPassword = document.getElementById('adminPassword');
+        const adminPanel = document.getElementById('adminPanel');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const deleteAllBtn = document.getElementById('deleteAllBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const totalResponsesSpan = document.getElementById('totalResponses');
+        const lastUpdateSpan = document.getElementById('lastUpdate');
+
+        // دالة حساب معامل ألفا كرونباخ (Cronbach's Alpha)
+        function calculateCronbachAlpha(responses) {
+            try {
+                const scaleQuestions = [
+                    'visual_appeal_1', 'visual_appeal_2', 'visual_appeal_3', 'visual_appeal_4',
+                    'interactivity_1', 'interactivity_2', 'interactivity_3', 'interactivity_4',
+                    'info_value_1', 'info_value_2', 'info_value_3', 'info_value_4',
+                    'personalization_1', 'personalization_2', 'personalization_3', 'personalization_4',
+                    'shareability_1', 'shareability_2', 'shareability_3', 'shareability_4',
+                    'consumer_behavior_1', 'consumer_behavior_2', 'consumer_behavior_3', 'consumer_behavior_4'
+                ];
+
+                if (responses.length === 0) return 0;
+
+                // تحويل الإجابات إلى قيم رقمية
+                const responseValues = {
+                    'أعارض بشدة': 1,
+                    'أختلف': 2,
+                    'محايد': 3,
+                    'أوافق': 4,
+                    'أوافق بشدة': 5
+                };
+
+                // إنشاء مصفوفة البيانات
+                const dataMatrix = [];
+                responses.forEach(response => {
+                    const row = [];
+                    scaleQuestions.forEach(question => {
+                        const value = responseValues[response[question]] || 0;
+                        row.push(value);
+                    });
+                    if (row.some(v => v !== 0)) {
+                        dataMatrix.push(row);
+                    }
+                });
+
+                if (dataMatrix.length < 2) return 0;
+
+                const n = scaleQuestions.length;
+                const m = dataMatrix.length;
+
+                // حساب المتوسط الحسابي والتباين لكل سؤال
+                let itemVariances = [];
+                for (let i = 0; i < n; i++) {
+                    const itemScores = dataMatrix.map(row => row[i]);
+                    const mean = itemScores.reduce((a, b) => a + b) / m;
+                    const variance = itemScores.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / (m - 1);
+                    itemVariances.push(variance);
+                }
+
+                const sumItemVariances = itemVariances.reduce((a, b) => a + b, 0);
+
+                // حساب التباين الكلي
+                const totalScores = dataMatrix.map(row => row.reduce((a, b) => a + b, 0));
+                const totalMean = totalScores.reduce((a, b) => a + b) / m;
+                const totalVariance = totalScores.reduce((sum, x) => sum + Math.pow(x - totalMean, 2), 0) / (m - 1);
+
+                // حساب معامل ألفا كرونباخ
+                const alpha = (n / (n - 1)) * (1 - (sumItemVariances / totalVariance));
+
+                return Math.max(0, Math.min(1, alpha));
+            } catch (e) {
+                console.error('خطأ في حساب Cronbach\'s Alpha:', e);
+                return 0;
+            }
+        }
+
+        // دالة حساب المتوسطات الحسابية لكل بعد
+        function calculateMeans(responses) {
+            try {
+                const dimensions = {
+                    'الجاذبية البصرية': ['visual_appeal_1', 'visual_appeal_2', 'visual_appeal_3', 'visual_appeal_4'],
+                    'التفاعلية': ['interactivity_1', 'interactivity_2', 'interactivity_3', 'interactivity_4'],
+                    'القيمة المعلوماتية': ['info_value_1', 'info_value_2', 'info_value_3', 'info_value_4'],
+                    'التخصيص': ['personalization_1', 'personalization_2', 'personalization_3', 'personalization_4'],
+                    'الانتشار والتداول': ['shareability_1', 'shareability_2', 'shareability_3', 'shareability_4'],
+                    'سلوك المستهلك': ['consumer_behavior_1', 'consumer_behavior_2', 'consumer_behavior_3', 'consumer_behavior_4']
+                };
+
+                const responseValues = {
+                    'أعارض بشدة': 1,
+                    'أختلف': 2,
+                    'محايد': 3,
+                    'أوافق': 4,
+                    'أوافق بشدة': 5
+                };
+
+                const means = {};
+                for (const [dimension, questions] of Object.entries(dimensions)) {
+                    let sum = 0;
+                    let count = 0;
+                    responses.forEach(response => {
+                        questions.forEach(q => {
+                            if (response[q]) {
+                                sum += responseValues[response[q]] || 0;
+                                count++;
+                            }
+                        });
+                    });
+                    means[dimension] = count > 0 ? (sum / count).toFixed(2) : 0;
+                }
+
+                return means;
+            } catch (e) {
+                console.error('خطأ في حساب المتوسطات:', e);
+                return {};
+            }
+        }
+
+        // دالة رسم الرسم البياني الدائري
+        function drawResponseChart(responses) {
+            try {
+                const responseValues = {
+                    'أعارض بشدة': 0,
+                    'أختلف': 0,
+                    'محايد': 0,
+                    'أوافق': 0,
+                    'أوافق بشدة': 0
+                };
+
+                // عد الردود
+                responses.forEach(response => {
+                    for (const [key, value] of Object.entries(response)) {
+                        if (responseValues.hasOwnProperty(value)) {
+                            responseValues[value]++;
+                        }
+                    }
+                });
+
+                const ctx = document.getElementById('responseChart').getContext('2d');
+                
+                if (responseChart) {
+                    responseChart.destroy();
+                }
+
+                responseChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['أعارض بشدة', 'أختلف', 'محايد', 'أوافق', 'أوافق بشدة'],
+                        datasets: [{
+                            data: [
+                                responseValues['أعارض بشدة'],
+                                responseValues['أختلف'],
+                                responseValues['محايد'],
+                                responseValues['أوافق'],
+                                responseValues['أوافق بشدة']
+                            ],
+                            backgroundColor: [
+                                '#ff6b6b',
+                                '#ffa94d',
+                                '#a8b8c8',
+                                '#74c0fc',
+                                '#51cf66'
+                            ],
+                            borderColor: [
+                                '#ff6b6b',
+                                '#ffa94d',
+                                '#a8b8c8',
+                                '#74c0fc',
+                                '#51cf66'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 11 },
+                                    color: '#626c71',
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('خطأ في رسم الرسم البياني:', e);
+            }
+        }
+
+        // دالة تحديث عرض الإحصائيات
+        function updateStatistics() {
+            try {
+                if (allResponses.length === 0) {
+                    document.getElementById('cronbachAlpha').textContent = '-';
+                    document.getElementById('meanValues').textContent = 'لا توجد بيانات كافية';
+                    return;
+                }
+
+                // حساب معامل ألفا كرونباخ
+                const alpha = calculateCronbachAlpha(allResponses);
+                const alphaText = alpha > 0 ? alpha.toFixed(3) : '-';
+                const alphaColor = alpha >= 0.7 ? '#4caf50' : (alpha >= 0.6 ? '#ff9800' : '#d32f2f');
+                document.getElementById('cronbachAlpha').innerHTML = 
+                    `<span style="color: ${alphaColor};">${alphaText}</span> <span style="font-size: 0.8em; color: #626c71;">(جودة: ${alpha >= 0.7 ? '✓ ممتازة' : (alpha >= 0.6 ? '⚠ مقبولة' : '❌ ضعيفة')})</span>`;
+
+                // حساب المتوسطات
+                const means = calculateMeans(allResponses);
+                let meansHtml = '';
+                for (const [dimension, mean] of Object.entries(means)) {
+                    meansHtml += `<div style="display: flex; justify-content: space-between; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #e0e0e0;">
+                        <span>${dimension}:</span>
+                        <strong style="color: #1976d2;">${mean}</strong>
+                    </div>`;
+                }
+                document.getElementById('meanValues').innerHTML = meansHtml;
+
+                // رسم الرسم البياني الدائري
+                drawResponseChart(allResponses);
+            } catch (e) {
+                console.error('خطأ في تحديث الإحصائيات:', e);
+            }
+        }
+
+        // تنزيل ملف Excel بطريقة ثابتة (Blob + FileSaver) مع fallback
+        function downloadWorkbookAsXlsx(workbook, fileName) {
+            const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+
+            // FileSaver (إن توفر)
+            if (typeof saveAs === 'function') {
+                saveAs(blob, fileName);
+                return;
+            }
+
+            // fallback: رابط تحميل مباشر
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        // فتح لوحة المسؤول
+        adminToggle.addEventListener('click', () => {
+            adminModal.style.display = 'flex';
+            adminPassword.focus();
+        });
+
+        // إغلاق لوحة المسؤول
+        closeModal.addEventListener('click', () => {
+            adminModal.style.display = 'none';
+        });
+
+        // تسجيل الدخول
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('adminEmail').value;
+            const password = adminPassword.value;
+            
+            if (!email || !password) {
+                alert('❌ يرجى إدخال البريد الإلكتروني وكلمة المرور!');
+                return;
+            }
+            
+            if (password === ADMIN_PASSWORD && ADMIN_EMAILS.includes(email)) {
+                isAdminLoggedIn = true;
+                localStorage.setItem('adminEmail', email);
+                updateAdminUI();
+                adminPassword.value = '';
+                document.getElementById('adminEmail').value = '';
+            } else if (password === ADMIN_PASSWORD) {
+                alert('❌ البريد الإلكتروني غير مسموح به! تم إعطاء الصلاحيات فقط لـ:\n' + ADMIN_EMAILS.join('\n'));
+                adminPassword.value = '';
+            } else {
+                alert('❌ كلمة المرور غير صحيحة!');
+                adminPassword.value = '';
+            }
+        });
+
+        // تسجيل الخروج
+        logoutBtn.addEventListener('click', () => {
+            isAdminLoggedIn = false;
+            updateAdminUI();
+            adminModal.style.display = 'none';
+        });
+
+        function updateAdminUI() {
+            if (isAdminLoggedIn) {
+                document.getElementById('loginForm').style.display = 'none';
+                adminPanel.style.display = 'block';
+                totalResponsesSpan.textContent = allResponses.length;
+                lastUpdateSpan.textContent = new Date().toLocaleString('ar-SA');
+                
+                // تحديث الإحصائيات
+                updateStatistics();
+                
+                // تحديث حالة زر التحكم بالردود
+                updateToggleButtonState();
+                
+                // تفعيل أزرار التحميل والحذف
+                downloadAllBtn.disabled = false;
+                downloadAllBtn.textContent = '📥 تحميل جميع الردود';
+                downloadAllBtn.style.background = 'var(--color-primary)';
+                
+                deleteAllBtn.disabled = false;
+                deleteAllBtn.textContent = '🗑️ حذف جميع الردود';
+                deleteAllBtn.style.background = '#ff6b6b';
+            } else {
+                document.getElementById('loginForm').style.display = 'block';
+                adminPanel.style.display = 'none';
+                
+                // تعطيل أزرار التحميل والحذف
+                downloadAllBtn.disabled = true;
+                downloadAllBtn.textContent = '🔒 يلزم تسجيل الدخول';
+                downloadAllBtn.style.background = '#6c757d';
+                
+                deleteAllBtn.disabled = true;
+                deleteAllBtn.textContent = '🔒 يلزم تسجيل الدخول';
+                deleteAllBtn.style.background = '#6c757d';
+            }
+        }
+
+        // ============ دالة إنشاء ملف CSV آمن وسريع (بدون مكتبات خارجية) ============
+        function generateCSVFile(responsesArray) {
+            try {
+                if (!Array.isArray(responsesArray) || responsesArray.length === 0) {
+                    throw new Error('لا توجد بيانات للتصدير');
+                }
+
+                // BOM للعربية (UTF-8 Signature)
+                let csvContent = '\uFEFF';
+                
+                // رؤوس الأعمدة
+                const headers = [
+                    '#', 'التاريخ والوقت', 'الجنس', 'الفئة العمرية', 'استخدام الإنترنت',
+                    'المنصات الرقمية', 'الجاذبية البصرية 1', 'الجاذبية البصرية 2', 'الجاذبية البصرية 3',
+                    'الجاذبية البصرية 4', 'التفاعلية 1', 'التفاعلية 2', 'التفاعلية 3', 'التفاعلية 4',
+                    'القيمة المعلوماتية 1', 'القيمة المعلوماتية 2', 'القيمة المعلوماتية 3', 'القيمة المعلوماتية 4',
+                    'التخصيص 1', 'التخصيص 2', 'التخصيص 3', 'التخصيص 4',
+                    'الانتشار والتداول 1', 'الانتشار والتداول 2', 'الانتشار والتداول 3', 'الانتشار والتداول 4',
+                    'سلوك المستهلك 1', 'سلوك المستهلك 2', 'سلوك المستهلك 3', 'سلوك المستهلك 4'
+                ];
+
+                // إضافة عنوان التقرير
+                csvContent += 'تقرير استبيان جيل Z والمحتوى الرقمي\n';
+                csvContent += `تاريخ التقرير: ${new Date().toLocaleString('ar-SA')}\n`;
+                csvContent += `إجمالي الردود: ${responsesArray.length}\n`;
+                csvContent += '---\n\n';
+                
+                // إضافة رؤوس الأعمدة
+                csvContent += headers.map(h => `"${h}"`).join(',') + '\n';
+
+                // إضافة بيانات الردود
+                responsesArray.forEach((response, index) => {
+                    const platformsText = Array.isArray(response.platforms) 
+                        ? response.platforms.join(' | ') 
+                        : (response.platforms || 'لم يتم اختيار');
+
+                    const rowData = [
+                        index + 1,
+                        response.timestamp || '-',
+                        response.gender || '-',
+                        response.birth_year || '-',
+                        response.internet_usage || '-',
+                        platformsText,
+                        response.visual_appeal_1 || '-',
+                        response.visual_appeal_2 || '-',
+                        response.visual_appeal_3 || '-',
+                        response.visual_appeal_4 || '-',
+                        response.interactivity_1 || '-',
+                        response.interactivity_2 || '-',
+                        response.interactivity_3 || '-',
+                        response.interactivity_4 || '-',
+                        response.info_value_1 || '-',
+                        response.info_value_2 || '-',
+                        response.info_value_3 || '-',
+                        response.info_value_4 || '-',
+                        response.personalization_1 || '-',
+                        response.personalization_2 || '-',
+                        response.personalization_3 || '-',
+                        response.personalization_4 || '-',
+                        response.shareability_1 || '-',
+                        response.shareability_2 || '-',
+                        response.shareability_3 || '-',
+                        response.shareability_4 || '-',
+                        response.consumer_behavior_1 || '-',
+                        response.consumer_behavior_2 || '-',
+                        response.consumer_behavior_3 || '-',
+                        response.consumer_behavior_4 || '-'
+                    ];
+
+                    // تغليف البيانات في علامات اقتباس لضمان سلامة الفواصل
+                    csvContent += rowData.map(cell => {
+                        const cellStr = String(cell);
+                        return `"${cellStr.replace(/"/g, '""')}"`;
+                    }).join(',') + '\n';
+                });
+
+                return csvContent;
+            } catch (error) {
+                console.error('خطأ في إنشاء ملف CSV:', error);
+                throw error;
+            }
+        }
+
+        // ============ دالة تحميل ملف CSV آمن (بدون مكتبات خارجية) ============
+        function downloadCSVFile(csvContent, fileName) {
+            try {
+                // إنشاء Blob من محتوى CSV
+                const blob = new Blob([csvContent], {
+                    type: 'text/csv;charset=utf-8;'
+                });
+
+                // إنشاء URL مؤقت للـ Blob
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', fileName);
+                link.style.visibility = 'hidden';
+                
+                // إضافة الرابط وتفعيل التحميل
+                document.body.appendChild(link);
+                link.click();
+                
+                // تنظيف الموارد
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 100);
+
+                return true;
+            } catch (error) {
+                console.error('خطأ في تحميل ملف CSV:', error);
+                throw error;
+            }
+        }
+
+        // ============ معالج حدث تحميل جميع الردود (نسخة خبير) ============
+        // دالة محسنة لتحميل جميع الردود بصيغة Excel
+        function downloadAllResponses() {
+            try {
+                // تفعيل حالة التحميل
+                downloadAllBtn.disabled = true;
+                downloadAllBtn.textContent = '⏳ جاري التحميل...';
+                downloadAllBtn.style.background = '#ff9800';
+
+                // إعادة تحميل البيانات من localStorage
+                const storedData = localStorage.getItem('surveyResponses');
+                if (!storedData || storedData === '[]') {
+                    downloadAllBtn.disabled = false;
+                    downloadAllBtn.textContent = '📥 تحميل جميع الردود';
+                    downloadAllBtn.style.background = 'var(--color-primary)';
+                    alert('⚠️ لا توجد ردود محفوظة بعد!\n\n✓ تأكد من ملء الاستبيان بالكامل\n✓ اضغط على زر "تقديم الاستبيان"\n✓ تأكد من تفعيل ملفات تعريف الارتباط\n✓ لا تستخدم الوضع الخاص (Private Mode)');
+                    return;
+                }
+
+                let allResponses = JSON.parse(storedData);
+
+                // إنشاء مصفوفة البيانات
+                const data = [];
+
+                // رؤوس الأعمدة
+                const headers = [
+                    'رقم', 'التاريخ والوقت', 'الجنس', 'الفئة العمرية', 'استخدام الإنترنت',
+                    'المنصات الرقمية', 'الجاذبية البصرية 1', 'الجاذبية البصرية 2',
+                    'الجاذبية البصرية 3', 'الجاذبية البصرية 4', 'التفاعلية 1',
+                    'التفاعلية 2', 'التفاعلية 3', 'التفاعلية 4', 'القيمة المعلوماتية 1',
+                    'القيمة المعلوماتية 2', 'القيمة المعلوماتية 3', 'القيمة المعلوماتية 4',
+                    'التخصيص 1', 'التخصيص 2', 'التخصيص 3', 'التخصيص 4',
+                    'الانتشار والتداول 1', 'الانتشار والتداول 2', 'الانتشار والتداول 3', 'الانتشار والتداول 4',
+                    'سلوك المستهلك 1', 'سلوك المستهلك 2', 'سلوك المستهلك 3', 'سلوك المستهلك 4'
+                ];
+                data.push(headers);
+
+                // إضافة بيانات الردود
+                allResponses.forEach((response, index) => {
+                    const platformsText = Array.isArray(response.platforms) 
+                        ? response.platforms.join(' | ') 
+                        : (response.platforms || '-');
+
+                    const row = [
+                        index + 1,
+                        response.timestamp || '-',
+                        response.gender || '-',
+                        response.birth_year || '-',
+                        response.internet_usage || '-',
+                        platformsText,
+                        response.visual_appeal_1 || '-',
+                        response.visual_appeal_2 || '-',
+                        response.visual_appeal_3 || '-',
+                        response.visual_appeal_4 || '-',
+                        response.interactivity_1 || '-',
+                        response.interactivity_2 || '-',
+                        response.interactivity_3 || '-',
+                        response.interactivity_4 || '-',
+                        response.info_value_1 || '-',
+                        response.info_value_2 || '-',
+                        response.info_value_3 || '-',
+                        response.info_value_4 || '-',
+                        response.personalization_1 || '-',
+                        response.personalization_2 || '-',
+                        response.personalization_3 || '-',
+                        response.personalization_4 || '-',
+                        response.shareability_1 || '-',
+                        response.shareability_2 || '-',
+                        response.shareability_3 || '-',
+                        response.shareability_4 || '-',
+                        response.consumer_behavior_1 || '-',
+                        response.consumer_behavior_2 || '-',
+                        response.consumer_behavior_3 || '-',
+                        response.consumer_behavior_4 || '-'
+                    ];
+                    data.push(row);
+                });
+
+                // إنشاء ورقة عمل
+                const ws = XLSX.utils.aoa_to_sheet(data);
+
+                // ضبط عرض الأعمدة
+                const wscols = [];
+                for(let i = 0; i < headers.length; i++) {
+                    wscols.push({wch: 18});
+                }
+                ws['!cols'] = wscols;
+
+                // إنشاء كتاب عمل جديد
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "استبيان جيل Z");
+
+                // إنشاء اسم الملف بتاريخ ووقت
+                const date = new Date();
+                const fileName = `استبيان_جيل_Z_${date.getFullYear()}-${String(date.getMonth()+1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}.xlsx`;
+
+                // تحميل الملف
+                downloadWorkbookAsXlsx(wb, fileName);
+
+                // إعادة تفعيل الزر بعد التحميل
+                setTimeout(() => {
+                    downloadAllBtn.disabled = false;
+                    downloadAllBtn.textContent = '📥 تحميل جميع الردود';
+                    downloadAllBtn.style.background = '#28a745';
+
+                    setTimeout(() => {
+                        downloadAllBtn.style.background = 'var(--color-primary)';
+                    }, 1500);
+
+                    alert(`✅ تم تحميل الملف بنجاح!\n\n📊 اسم الملف: ${fileName}\n📈 عدد الردود: ${allResponses.length}\n\n💡 يمكنك فتحه في:\n• Microsoft Excel\n• Google Sheets\n• LibreOffice Calc\n\n📝 الملف بصيغة XLSX مع دعم كامل للعربية`);
+                }, 500);
+
+                // تسجيل في Console
+                console.log(`✅ تم تحميل ${allResponses.length} رد بنجاح`);
+                console.log(`📄 اسم الملف: ${fileName}`);
+
+            } catch (error) {
+                // معالجة الأخطاء
+                console.error('❌ خطأ في التحميل:', error);
+                downloadAllBtn.disabled = false;
+                downloadAllBtn.textContent = '📥 تحميل جميع الردود';
+                downloadAllBtn.style.background = '#d32f2f';
+
+                setTimeout(() => {
+                    downloadAllBtn.style.background = 'var(--color-primary)';
+                }, 2000);
+
+                alert(`❌ حدث خطأ في تحميل الملف:\n\n${error.message}\n\n🔧 جرب:\n✓ إعادة تحميل الصفحة (F5)\n✓ استخدام متصفح Chrome أو Firefox\n✓ مسح ذاكرة التخزين المؤقتة\n✓ التأكد من وجود ردود مسبقاً`);
+            }
+        }
+
+        downloadAllBtn.addEventListener('click', downloadAllResponses);
+
+        // دالة حذف جميع الردود
+        function deleteAllResponses() {
+            if (!isAdminLoggedIn) {
+                alert('❌ يجب تسجيل الدخول أولاً!');
+                return;
+            }
+
+            const adminEmail = localStorage.getItem('adminEmail');
+            const confirmDelete = confirm(
+                `⚠️ تحذير!\n\nأنت على وشك حذف جميع البيانات المحفوظة.\n\nالبريد الإلكتروني: ${adminEmail}\n\nهذا الإجراء لا يمكن التراجع عنه!\n\nهل أنت متأكد من رغبتك في المتابعة؟`
+            );
+
+            if (!confirmDelete) {
+                return;
+            }
+
+            const finalConfirm = prompt(
+                '⚠️ تأكيد نهائي\n\nاكتب "نعم أوافق" لتأكيد حذف جميع الردود:'
+            );
+
+            if (finalConfirm === 'نعم أوافق') {
+                try {
+                    localStorage.removeItem('surveyResponses');
+                    allResponses = [];
+                    totalResponsesSpan.textContent = '0';
+                    lastUpdateSpan.textContent = new Date().toLocaleString('ar-SA');
+                    document.getElementById('cronbachAlpha').textContent = '-';
+                    document.getElementById('meanValues').textContent = 'لا توجد بيانات';
+                    
+                    if (responseChart) {
+                        responseChart.destroy();
+                    }
+
+                    alert(`✅ تم حذف جميع الردود بنجاح!\n\n📊 تم الحذف بواسطة:\n${adminEmail}\n⏰ الوقت: ${new Date().toLocaleString('ar-SA')}`);
+                    console.log(`🗑️ تم حذف جميع البيانات بواسطة: ${adminEmail}`);
+                } catch (error) {
+                    alert('❌ حدث خطأ أثناء حذف البيانات: ' + error.message);
+                    console.error('خطأ في حذف البيانات:', error);
+                }
+            } else if (finalConfirm !== null) {
+                alert('❌ تم إلغاء عملية الحذف - النص المدخل غير صحيح!');
+            }
+        }
+
+        deleteAllBtn.addEventListener('click', deleteAllResponses);
+
+        // دالة تبديل حالة استقبال الردود
+        function toggleResponsesAccepting() {
+            if (!isAdminLoggedIn) {
+                alert('❌ يجب تسجيل الدخول أولاً!');
+                return;
+            }
+
+            isResponsesAccepting = !isResponsesAccepting;
+            localStorage.setItem('isResponsesAccepting', JSON.stringify(isResponsesAccepting));
+            
+            const toggleBtn = document.getElementById('toggleResponsesBtn');
+            const statusBadge = document.getElementById('responseStatusBadge');
+            const adminEmail = localStorage.getItem('adminEmail');
+            
+            if (isResponsesAccepting) {
+                toggleBtn.textContent = '🟢 إيقاف الاستقبال';
+                toggleBtn.style.background = '#4caf50';
+                statusBadge.textContent = '🟢 مفعل';
+                statusBadge.style.background = '#4caf50';
+                alert(`✅ تم تفعيل استقبال الردود!\n\n📊 من قبل: ${adminEmail}\n⏰ الوقت: ${new Date().toLocaleString('ar-SA')}\n\nالمستجيبون الآن يستطيعون تقديم الاستبيانات بنجاح.`);
+                console.log(`✅ تم تفعيل استقبال الردود بواسطة: ${adminEmail}`);
+            } else {
+                toggleBtn.textContent = '🔴 تفعيل الاستقبال';
+                toggleBtn.style.background = '#f44336';
+                statusBadge.textContent = '🔴 موقوف';
+                statusBadge.style.background = '#f44336';
+                alert(`❌ تم إيقاف استقبال الردود!\n\n📊 من قبل: ${adminEmail}\n⏰ الوقت: ${new Date().toLocaleString('ar-SA')}\n\nالمستجيبون لن يتمكنوا من تقديم الاستبيانات حالياً.`);
+                console.log(`❌ تم إيقاف استقبال الردود بواسطة: ${adminEmail}`);
+            }
+        }
+
+        // إضافة حدث الزر
+        document.getElementById('toggleResponsesBtn').addEventListener('click', toggleResponsesAccepting);
+
+        // تحديث حالة الزر والشارة عند تحميل لوحة المسؤول
+        function updateToggleButtonState() {
+            const toggleBtn = document.getElementById('toggleResponsesBtn');
+            const statusBadge = document.getElementById('responseStatusBadge');
+            
+            if (isResponsesAccepting) {
+                toggleBtn.textContent = '🟢 إيقاف الاستقبال';
+                toggleBtn.style.background = '#4caf50';
+                statusBadge.textContent = '🟢 مفعل';
+                statusBadge.style.background = '#4caf50';
+            } else {
+                toggleBtn.textContent = '🔴 تفعيل الاستقبال';
+                toggleBtn.style.background = '#f44336';
+                statusBadge.textContent = '🔴 موقوف';
+                statusBadge.style.background = '#f44336';
+            }
+        }
+
+        // دالة للتحقق من حالة البيانات المحفوظة
+        function checkDataStatus() {
+            const storedData = localStorage.getItem('surveyResponses');
+            if (!storedData || storedData === '[]') {
+                console.log('⚠️ لا توجد بيانات محفوظة حالياً');
+                return false;
+            }
+            try {
+                const data = JSON.parse(storedData);
+                console.log(`✅ يوجد ${data.length} رد محفوظ في LocalStorage`);
+                return true;
+            } catch (e) {
+                console.error('❌ خطأ في قراءة البيانات:', e);
+                return false;
+            }
+        }
+
+        // تحديث شريط التقدم
+        function updateProgressBar() {
+            const totalQuestions = form.querySelectorAll('input[type="radio"]').length + form.querySelectorAll('input[type="checkbox"][name="platforms"]').length;
+            const answeredRadios = form.querySelectorAll('input[type="radio"]:checked').length;
+            const answeredCheckboxes = form.querySelectorAll('input[type="checkbox"][name="platforms"]:checked').length;
+            const totalAnswered = answeredRadios + (answeredCheckboxes > 0 ? 1 : 0);
+            const progress = (totalAnswered / (totalQuestions / 50)) * 100;
+            progressFill.style.width = Math.min(progress, 100) + '%';
+        }
+
+        // تعيين أسماء الاستجابات المختلفة
+        const responseMapping = {
+            'أعارض بشدة': 'strongly-disagree',
+            'أختلف': 'disagree',
+            'محايد': 'neutral',
+            'أوافق': 'agree',
+            'أوافق بشدة': 'strongly-agree'
+        };
+
+        form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', () => {
+                updateProgressBar();
+                if (input.type === 'radio') {
+                    const label = input.closest('.scale-option');
+                    if (label) {
+                        const parent = input.closest('.scale-container');
+                        if (parent) {
+                            parent.querySelectorAll('.scale-option').forEach(el => {
+                                Object.keys(responseMapping).forEach(key => {
+                                    el.classList.remove('checked-' + responseMapping[key]);
+                                });
+                            });
+                            const responseKey = input.value;
+                            if (responseMapping[responseKey]) {
+                                label.classList.add('checked-' + responseMapping[responseKey]);
+                            }
+                        }
+                    }
+                } else if (input.type === 'checkbox') {
+                    const label = input.closest('.option-label');
+                    if (label) {
+                        label.classList.toggle('checked', input.checked);
+                    }
+                }
+            });
+        });
+
+        // معالجة تقديم الاستبيان
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!isResponsesAccepting) {
+                alert('❌ عذراً! الاستبيان غير متاح حالياً.\n\nتم إيقاف استقبال الردود مؤقتاً من قبل المسؤول.\n\nيرجى المحاولة لاحقاً أو التواصل مع الفريق البحثي.');
+                return;
+            }
+
+            const formData = new FormData(form);
+            const timestamp = new Date().toLocaleString('ar-SA');
+
+            const responseObj = {
+                timestamp: timestamp
+            };
+
+            const platformsArray = [];
+            for (let [key, value] of formData.entries()) {
+                if (key === 'platforms') {
+                    platformsArray.push(value);
+                } else {
+                    responseObj[key] = value;
+                }
+            }
+
+            if (platformsArray.length > 0) {
+                responseObj.platforms = platformsArray;
+            }
+
+            allResponses.push(responseObj);
+            localStorage.setItem('surveyResponses', JSON.stringify(allResponses));
+
+            if (isAdminLoggedIn) {
+                totalResponsesSpan.textContent = allResponses.length;
+                lastUpdateSpan.textContent = new Date().toLocaleString('ar-SA');
+                updateStatistics();
+            }
+
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 4000);
+
+            setTimeout(() => {
+                form.reset();
+                progressFill.style.width = '0%';
+                document.querySelectorAll('.checked').forEach(el => {
+                    el.classList.remove('checked');
+                });
+            }, 1500);
+        });
+
+        updateProgressBar();
+
+        // تهيئة حالة الزر عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            console.log('📊 حالة الاستبيان عند التحميل:');
+            checkDataStatus();
+            
+            // التأكد من أن الزر معطل في البداية
+            if (!isAdminLoggedIn) {
+                downloadAllBtn.disabled = true;
+                downloadAllBtn.textContent = '🔒 يلزم تسجيل الدخول';
+                downloadAllBtn.style.background = '#6c757d';
+            }
+        });
+
+        // إدارة مشاركة الرابط
+        const shareBtn = document.getElementById('shareBtn');
+        const shareContent = document.getElementById('shareContent');
+        const surveyLink = document.getElementById('surveyLink');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // إنشاء رابط الاستبيان
+        const currentUrl = window.location.href;
+        surveyLink.value = currentUrl;
+
+        // عرض/إخفاء قسم المشاركة
+        shareBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isHidden = shareContent.style.display === 'none' || shareContent.style.display === '';
+            shareContent.style.display = isHidden ? 'block' : 'none';
+            
+            // تغيير نص الزر
+            shareBtn.textContent = isHidden ? '📤 إخفاء الرابط' : '📤 مشاركة الرابط';
+            
+            // تحديد النص في حقل الإدخال تلقائياً
+            if (isHidden) {
+                setTimeout(() => {
+                    surveyLink.select();
+                }, 100);
+            }
+        });
+
+        // نسخ الرابط إلى الحافظة (مع دعم Clipboard API الحديثة)
+        copyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            try {
+                // محاولة استخدام Clipboard API الحديثة (الأفضل)
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(surveyLink.value);
+                } else {
+                    // Fallback القديمة
+                    surveyLink.select();
+                    document.execCommand('copy');
+                }
+                
+                // تأثير النجاح
+                const originalText = copyBtn.textContent;
+                const originalBg = copyBtn.style.background;
+                
+                copyBtn.textContent = '✅ تم النسخ!';
+                copyBtn.style.background = '#4caf50';
+                copyBtn.style.color = 'white';
+                copyBtn.disabled = true;
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = originalBg;
+                    copyBtn.style.color = 'white';
+                    copyBtn.disabled = false;
+                }, 2500);
+                
+                console.log('✅ تم نسخ الرابط بنجاح:', surveyLink.value);
+            } catch (error) {
+                console.error('❌ خطأ في نسخ الرابط:', error);
+                alert('❌ حدث خطأ في نسخ الرابط\n\nيرجى المحاولة يدويًا: Ctrl+C أو Cmd+C');
+            }
+        });
+    </script>
+</body>
+</html>
